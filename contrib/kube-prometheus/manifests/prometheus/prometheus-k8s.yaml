@@ -15,7 +15,7 @@ spec:
     matchLabels:
       role: prometheus-rulefiles
       prometheus: k8s
-  retention: 24h
+  retention: ##RETENTION_PERIOD##
   resources:
     requests:
       # 2Gi is default, but won't schedule if you don't have a node with >2Gi
@@ -23,6 +23,16 @@ spec:
       # production use. This value is mainly meant for demonstration/testing
       # purposes.
       memory: 400Mi
+  storage:
+    volumeClaimTemplate:
+    - metadata:
+        name: data
+      spec:
+        accessModes: [ "ReadWriteOnce" ]
+        storageClassName: ##STORAGE_CLASS_NAME##
+        resources:
+          requests:
+            storage: ##STORAGE_SIZE##
   alerting:
     alertmanagers:
     - namespace: monitoring
