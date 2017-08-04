@@ -13,6 +13,7 @@ spec:
   - hosts:
     - ##PROMETHEUS_HOST##
     secretName: prometheus-tls
+spec:
   rules:
   - host: ##PROMETHEUS_HOST##
     http:

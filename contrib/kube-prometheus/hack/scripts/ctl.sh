@@ -17,6 +17,7 @@ Mandatory arguments:
 Optional arguments:
   -h, --help                   output this message
   -n, --namespace              use provided namespace insted of the 'monitoring' default
+  --use-kube-lego              add kube-lego annotations 
 EOF
 
 RANDOM_NUMBER=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 4 | head -n 1)
@@ -25,6 +26,7 @@ WORKDIR="$TMP_DIR/prometheus-operator-master/contrib/kube-prometheus"
 DEPLOY_SCRIPT="hack/cluster-monitoring/self-hosted-deploy"
 TEARDOWN_SCRIPT="hack/cluster-monitoring/self-hosted-teardown"
 
+USE_KUBE_LEGO=false
 MODE=""
 NAMESPACE="monitoring"
 FIRST_INSTALL="true"
@@ -32,7 +34,7 @@ USER="admin"
 USER_BASE64=$(echo -n "$USER" | base64 -w0)
 PASSWORD='~,eirbDjhj,eirb'
 
-TEMP=$(getopt -o i,u,d,n,h --long help,install,upgrade,delete,namespace \
+TEMP=$(getopt -o i,u,d,n,h --long help,install,upgrade,delete,use-kube-lego,namespace \
              -n 'ctl' -- "$@")
 
 eval set -- "$TEMP"
@@ -47,6 +49,8 @@ while true; do
       MODE=delete; shift ;;
     -n | --namespace )
       NAMESPACE="$2"; shift 2;;
+    --use-kube-lego )
+      USE_KUBE_LEGO=true; shift ;;
     -h | --help )
       echo "$HELP_STRING"; exit 0 ;;
     -- )
