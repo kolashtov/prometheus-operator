@@ -39,7 +39,7 @@ STORAGE_SIZE="20Gi"
 RETENTION_PERIOD="1440h"
 
 
-TEMP=$(getopt -o i,u,d,n,h --long help,install,upgrade,delete,retention:,storage-class-name:,storage-size:,namespace: \
+TEMP=$(getopt -o i,u,d,n:,h --long namespace:,help,install,upgrade,delete,retention:,storage-class-name:,storage-size: \
              -n 'ctl' -- "$@")
 
 eval set -- "$TEMP"
@@ -53,7 +53,7 @@ while true; do
     -d | --delete )
       MODE=delete; shift ;;
     -n | --namespace )
-      NAMESPACE="$2"; shift 2;;
+      NAMESPACE="$2"; shift 2 ;;
     --retention )
       RETENTION_PERIOD="$2"; shift 2;;
     --storage-class-name )
@@ -87,8 +87,6 @@ cd "$WORKDIR"
 
 function install {
   PASSWORD=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 16 | head -n 1)
-  echo "Login: admin"
-  echo "Password: $PASSWORD"
   PASSWORD_BASE64=$(echo -n "$PASSWORD" | base64 -w0)
   BASIC_AUTH_SECRET=$(echo "$PASSWORD" | htpasswd -ni admin | base64 -w0)
   # install basic-auth secret
@@ -104,6 +102,10 @@ function install {
          -e "s/##STORAGE_SIZE##/$STORAGE_SIZE/g" \
               manifests/prometheus/prometheus-k8s.yaml
   $DEPLOY_SCRIPT
+  echo '##################################'
+  echo "Login: admin"
+  echo "Password: $PASSWORD"
+  echo '##################################'
 }
 
 function upgrade {
@@ -121,7 +123,9 @@ function upgrade {
   # install prometheus ingress host
   sed -i "s/##PROMETHEUS_HOST##/$PROMETHEUS_HOST/g" manifests/ingress/prometheus-ingress.yaml
   # get storage parameters
-
+  RETENTION_PERIOD=$(kubectl -n "$NAMESPACE" get prometheus k8s -o json | jq -r '.spec.retention')
+  STORAGE_CLASS_NAME=$(kubectl -n "$NAMESPACE" get prometheus k8s -o json | jq -r '.spec.storage.volumeClaimTemplate.spec.storageClassName')
+  STORAGE_SIZE=$(kubectl -n "$NAMESPACE" get prometheus k8s -o json | jq -r '.spec.storage.volumeClaimTemplate.spec.resources.requests.storage')
   # set storage parameters
   sed -i -e "s/##RETENTION_PERIOD##/$RETENTION_PERIOD/g" \
          -e "s/##STORAGE_CLASS_NAME##/$STORAGE_CLASS_NAME/g" \
