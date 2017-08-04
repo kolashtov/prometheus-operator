@@ -24,7 +24,7 @@ EOF
 
 RANDOM_NUMBER=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 4 | head -n 1)
 TMP_DIR="/tmp/prometheus-ctl-$RANDOM_NUMBER"
-WORKDIR="$TMP_DIR/prometheus-operator-master/contrib/kube-prometheus"
+WORKDIR="$TMP_DIR/prometheus-operator/contrib/kube-prometheus"
 DEPLOY_SCRIPT="hack/cluster-monitoring/self-hosted-deploy"
 TEARDOWN_SCRIPT="hack/cluster-monitoring/self-hosted-teardown"
 
@@ -73,7 +73,7 @@ if [ -z "$MODE" ]; then echo "Mode of operation not provided. Use '-h' to print 
 
 type curl >/dev/null 2>&1 || { echo >&2 "I require curl but it's not installed.  Aborting."; exit 1; }
 type base64 >/dev/null 2>&1 || { echo >&2 "I require base64 but it's not installed.  Aborting."; exit 1; }
-type unzip >/dev/null 2>&1 || { echo >&2 "I require unzip but it's not installed.  Aborting."; exit 1; }
+type git >/dev/null 2>&1 || { echo >&2 "I require git but it's not installed.  Aborting."; exit 1; }
 type kubectl >/dev/null 2>&1 || { echo >&2 "I require kubectl but it's not installed.  Aborting."; exit 1; }
 type jq >/dev/null 2>&1 || { echo >&2 "I require jq but it's not installed.  Aborting."; exit 1; }
 type htpasswd >/dev/null 2>&1 || { echo >&2 "I require kubectl but it's not installed. Please, install 'apache2-utils'. Aborting."; exit 1; }
@@ -81,8 +81,7 @@ type htpasswd >/dev/null 2>&1 || { echo >&2 "I require kubectl but it's not inst
 
 mkdir -p "$TMP_DIR"
 cd "$TMP_DIR"
-curl -OJL "https://github.com/flant/prometheus-operator/archive/master.zip" -o prometheus-operator-master.zip
-unzip -o prometheus-operator-master.zip >/dev/null 2>&1
+git clone --depth 1 https://github.com/flant/prometheus-operator.git
 cd "$WORKDIR"
 
 
