@@ -25,3 +25,4 @@ sleep 5
 
 kctl delete -f manifests/prometheus-operator
 
+kctl delete -f manifests/ingress/

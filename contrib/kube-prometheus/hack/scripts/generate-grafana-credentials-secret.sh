@@ -17,4 +17,3 @@ data:
   user: $(echo -n ${user} | base64 --wrap=0)
   password: $(echo -n ${password} | base64 --wrap=0)
 EOF
-

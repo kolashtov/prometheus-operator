@@ -3,4 +3,3 @@
 hack/cluster-monitoring/deploy
 
 kubectl apply -f manifests/k8s/self-hosted
-
