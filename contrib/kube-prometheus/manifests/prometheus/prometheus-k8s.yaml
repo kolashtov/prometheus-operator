@@ -25,7 +25,7 @@ spec:
       memory: 400Mi
   storage:
     volumeClaimTemplate:
-    - metadata:
+      metadata:
         name: data
       spec:
         accessModes: [ "ReadWriteOnce" ]
