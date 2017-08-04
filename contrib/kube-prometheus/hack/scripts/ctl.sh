@@ -76,7 +76,7 @@ type base64 >/dev/null 2>&1 || { echo >&2 "I require base64 but it's not install
 type git >/dev/null 2>&1 || { echo >&2 "I require git but it's not installed.  Aborting."; exit 1; }
 type kubectl >/dev/null 2>&1 || { echo >&2 "I require kubectl but it's not installed.  Aborting."; exit 1; }
 type jq >/dev/null 2>&1 || { echo >&2 "I require jq but it's not installed.  Aborting."; exit 1; }
-type htpasswd >/dev/null 2>&1 || { echo >&2 "I require kubectl but it's not installed. Please, install 'apache2-utils'. Aborting."; exit 1; }
+type htpasswd >/dev/null 2>&1 || { echo >&2 "I require htpasswd but it's not installed. Please, install 'apache2-utils'. Aborting."; exit 1; }
 
 
 mkdir -p "$TMP_DIR"
