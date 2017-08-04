@@ -3,8 +3,8 @@
 set -e
 
 ! read -rd '' HELP_STRING <<"EOF"
-Usage: bootstrap.sh [OPTION]... [-i|--install] PROMETHEUS_HOST GRAFANA_HOST
-   or: bootstrap.sh [OPTION]...
+Usage: ctl.sh [OPTION]... [-i|--install] PROMETHEUS_HOST GRAFANA_HOST
+   or: ctl.sh [OPTION]...
 
 Install Prometheus Operator to Kubernetes cluster.
 Default namespace is 'monitoring'. Can be overridden with '-n' option.
@@ -21,7 +21,7 @@ Optional arguments:
 EOF
 
 RANDOM_NUMBER=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 4 | head -n 1)
-TMP_DIR="/tmp/prometheus-bootstrap-$RANDOM_NUMBER"
+TMP_DIR="/tmp/prometheus-ctl-$RANDOM_NUMBER"
 WORKDIR="$TMP_DIR/prometheus-operator-master/contrib/kube-prometheus"
 DEPLOY_SCRIPT="hack/cluster-monitoring/self-hosted-deploy"
 TEARDOWN_SCRIPT="hack/cluster-monitoring/self-hosted-teardown"
@@ -35,7 +35,7 @@ USER_BASE64=$(echo -n "$USER" | base64 -w0)
 PASSWORD='~,eirbDjhj,eirb'
 
 TEMP=$(getopt -o i,u,d,n,h --long help,install,upgrade,delete,use-kube-lego,namespace \
-             -n 'bootstrap' -- "$@")
+             -n 'ctl' -- "$@")
 
 eval set -- "$TEMP"
 
@@ -87,9 +87,9 @@ function install {
   sed -i -e "s%##BASIC_AUTH_SECRET##%$BASIC_AUTH_SECRET%" manifests/ingress/basic-auth-secret.yaml
   # install grafana credentials and ingress host
   sed -i -e "s/##GRAFANA_USER##/$USER_BASE64/" -e "s/##GRAFANA_PASSWORD##/$PASSWORD_BASE64/" manifests/grafana/grafana-credentials.yaml
-  sed -i -e "s/##GRAFANA_HOST##/$GRAFANA_HOST/" manifests/ingress/grafana-ingress.yaml
+  sed -i -e "s/##GRAFANA_HOST##/$GRAFANA_HOST/g" manifests/ingress/grafana-ingress.yaml
   # install prometheus ingress host
-  sed -i "s/##PROMETHEUS_HOST##/$PROMETHEUS_HOST/" manifests/ingress/prometheus-ingress.yaml
+  sed -i "s/##PROMETHEUS_HOST##/$PROMETHEUS_HOST/g" manifests/ingress/prometheus-ingress.yaml
   $DEPLOY_SCRIPT
 }
 
@@ -104,9 +104,9 @@ function upgrade {
   sed -i -e "s%##BASIC_AUTH_SECRET##%$BASIC_AUTH_SECRET%" manifests/ingress/basic-auth-secret.yaml
   # install grafana credentials and ingress host
   sed -i -e "s/##GRAFANA_USER##/$USER_BASE64/" -e "s/##GRAFANA_PASSWORD##/$PASSWORD_BASE64/" manifests/grafana/grafana-credentials.yaml
-  sed -i -e "s/##GRAFANA_HOST##/$GRAFANA_HOST/" manifests/ingress/grafana-ingress.yaml
+  sed -i -e "s/##GRAFANA_HOST##/$GRAFANA_HOST/g" manifests/ingress/grafana-ingress.yaml
   # install prometheus ingress host
-  sed -i "s/##PROMETHEUS_HOST##/$PROMETHEUS_HOST/" manifests/ingress/prometheus-ingress.yaml
+  sed -i "s/##PROMETHEUS_HOST##/$PROMETHEUS_HOST/g" manifests/ingress/prometheus-ingress.yaml
   $DEPLOY_SCRIPT
 }
 

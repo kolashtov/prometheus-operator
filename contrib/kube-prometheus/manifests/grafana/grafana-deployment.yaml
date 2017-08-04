@@ -16,6 +16,8 @@ spec:
         - name: GF_AUTH_BASIC_ENABLED
           value: "true"
         - name: GF_AUTH_ANONYMOUS_ENABLED
+          value: "false"
+        - name: GF_AUTH_PROXY_ENABLED
           value: "true"
         - name: GF_SECURITY_ADMIN_USER
           valueFrom:
