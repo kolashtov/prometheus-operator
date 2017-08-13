@@ -16,6 +16,7 @@ Mandatory arguments:
   --retention                  how long will Prometheus store metrics
   --storage-class-name         name of the storage class
   --storage-size               storage size with optional IEC suffix
+  --memory-usage               prometheus pod RSS limit
 
 Optional arguments:
   -h, --help                   output this message
@@ -37,9 +38,10 @@ PASSWORD='~,eirbDjhj,eirb'
 STORAGE_CLASS_NAME="rbd"
 STORAGE_SIZE="20Gi"
 RETENTION_PERIOD="1440h"
+MEMORY_USAGE="400Mi"
 
 
-TEMP=$(getopt -o i,u,d,n:,h --long namespace:,help,install,upgrade,delete,retention:,storage-class-name:,storage-size: \
+TEMP=$(getopt -o i,u,d,n:,h --long namespace:,help,install,upgrade,delete,retention:,storage-class-name:,storage-size:,memory-usage: \
              -n 'ctl' -- "$@")
 
 eval set -- "$TEMP"
@@ -60,6 +62,8 @@ while true; do
       STORAGE_CLASS_NAME="$2"; shift 2;;
     --storage-size )
       STORAGE_SIZE="$2"; shift 2;;
+    --memory-usage )
+      MEMORY_USAGE="$2"; shift 2;;
     -h | --help )
       echo "$HELP_STRING"; exit 0 ;;
     -- )
@@ -100,6 +104,7 @@ function install {
   sed -i -e "s/##RETENTION_PERIOD##/$RETENTION_PERIOD/g" \
          -e "s/##STORAGE_CLASS_NAME##/$STORAGE_CLASS_NAME/g" \
          -e "s/##STORAGE_SIZE##/$STORAGE_SIZE/g" \
+         -e "s/##MEMORY_USAGE##/$MEMORY_USAGE/g" \
               manifests/prometheus/prometheus-k8s.yaml
   $DEPLOY_SCRIPT
   echo '##################################'
@@ -124,12 +129,14 @@ function upgrade {
   sed -i "s/##PROMETHEUS_HOST##/$PROMETHEUS_HOST/g" manifests/ingress/prometheus-ingress.yaml
   # get storage parameters
   RETENTION_PERIOD=$(kubectl -n "$NAMESPACE" get prometheus k8s -o json | jq -r '.spec.retention')
+  MEMORY_USAGE=$(kubectl -n "$NAMESPACE" get prometheus k8s -o json | jq -r '.spec.resources.requests.memory')
   STORAGE_CLASS_NAME=$(kubectl -n "$NAMESPACE" get prometheus k8s -o json | jq -r '.spec.storage.volumeClaimTemplate.spec.storageClassName')
   STORAGE_SIZE=$(kubectl -n "$NAMESPACE" get prometheus k8s -o json | jq -r '.spec.storage.volumeClaimTemplate.spec.resources.requests.storage')
   # set storage parameters
   sed -i -e "s/##RETENTION_PERIOD##/$RETENTION_PERIOD/g" \
          -e "s/##STORAGE_CLASS_NAME##/$STORAGE_CLASS_NAME/g" \
          -e "s/##STORAGE_SIZE##/$STORAGE_SIZE/g" \
+         -e "s/##MEMORY_USAGE##/$MEMORY_USAGE/g" \
               manifests/prometheus/prometheus-k8s.yaml
   $DEPLOY_SCRIPT
 }
