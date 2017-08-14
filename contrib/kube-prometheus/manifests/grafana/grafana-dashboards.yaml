@@ -4695,19 +4695,34 @@ data:
               "pointradius": 5,
               "points": false,
               "renderer": "flot",
-              "seriesOverrides": [],
+              "seriesOverrides": [
+                {
+                  "alias": "Total",
+                  "lines": false,
+                  "stack": false
+                }
+              ],
               "spaceLength": 10,
               "span": 6,
               "stack": true,
               "steppedLine": false,
               "targets": [
                 {
+                  "expr": "sum(kube_pod_container_resource_requests_memory_bytes)",
+                  "format": "time_series",
+                  "intervalFactor": 2,
+                  "legendFormat": "Total",
+                  "metric": "cluster_namespace_controller_pod_container:memory_usage:bytes",
+                  "refId": "B",
+                  "step": 20
+                },
+                {
                   "expr": "sum(kube_pod_container_resource_requests_memory_bytes) by (namespace)",
                   "format": "time_series",
                   "intervalFactor": 2,
                   "legendFormat": "{{namespace}}",
                   "metric": "cluster_namespace_controller_pod_container:memory_usage:bytes",
-                  "refId": "B",
+                  "refId": "A",
                   "step": 20
                 }
               ],
@@ -4754,6 +4769,7 @@ data:
               "dashLength": 10,
               "dashes": false,
               "datasource": "${DS_PROMETHEUS}",
+              "decimals": 3,
               "fill": 5,
               "height": "200",
               "id": 13,
@@ -4778,19 +4794,34 @@ data:
               "pointradius": 5,
               "points": false,
               "renderer": "flot",
-              "seriesOverrides": [],
+              "seriesOverrides": [
+                {
+                  "alias": "Total",
+                  "lines": false,
+                  "stack": false
+                }
+              ],
               "spaceLength": 10,
               "span": 6,
               "stack": true,
               "steppedLine": false,
               "targets": [
                 {
+                  "expr": "sum(kube_pod_container_resource_requests_cpu_cores)",
+                  "format": "time_series",
+                  "intervalFactor": 2,
+                  "legendFormat": "Total",
+                  "metric": "cluster_namespace_controller_pod_container:memory_usage:bytes",
+                  "refId": "B",
+                  "step": 20
+                },
+                {
                   "expr": "sum(kube_pod_container_resource_requests_cpu_cores) by (namespace)",
                   "format": "time_series",
                   "intervalFactor": 2,
                   "legendFormat": "{{namespace}}",
                   "metric": "cluster_namespace_controller_pod_container:memory_usage:bytes",
-                  "refId": "B",
+                  "refId": "A",
                   "step": 20
                 }
               ],
@@ -4877,7 +4908,7 @@ data:
       },
       "timezone": "",
       "title": "Overview All Namespaces",
-      "version": 2
+      "version": 3
     }
     ,
       "inputs": [
