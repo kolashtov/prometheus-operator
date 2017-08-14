@@ -38,7 +38,7 @@ PASSWORD='~,eirbDjhj,eirb'
 STORAGE_CLASS_NAME="rbd"
 STORAGE_SIZE="20Gi"
 RETENTION_PERIOD="1440h"
-MEMORY_USAGE="400Mi"
+MEMORY_USAGE="2Gi"
 
 
 TEMP=$(getopt -o i,u,d,n:,h --long namespace:,help,install,upgrade,delete,retention:,storage-class-name:,storage-size:,memory-usage: \
