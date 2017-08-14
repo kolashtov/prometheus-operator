@@ -49,3 +49,20 @@ metadata:
 rules:
 - nonResourceURLs: ["/metrics"]
   verbs: ["get"]
+---
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: Role
+metadata:
+  name: prometheus-k8s
+  namespace: kube-nginx-ingress
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - services
+  - endpoints
+  - pods
+  verbs:
+  - get
+  - list
+  - watch
