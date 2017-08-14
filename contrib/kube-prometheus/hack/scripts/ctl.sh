@@ -155,6 +155,7 @@ then
   fi
 elif [ "$MODE" == "upgrade" ]
 then
+  kubectl get ns "$NAMESPACE" >/dev/null 2>&1 || echo "Namespace '$NAMESPACE' does not exist. Please, install operator with '-i' option first." ; exit 1
   upgrade
 elif [ "$MODE" == "delete" ]
 then
