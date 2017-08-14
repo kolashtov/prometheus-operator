@@ -1,0 +1,17 @@
+apiVersion: monitoring.coreos.com/v1alpha1
+kind: ServiceMonitor
+metadata:
+  labels:
+    k8s-app: kube-nginx-ingress
+  name: kube-nginx-ingress
+spec:
+  jobLabel: k8s-app
+  endpoints:
+  - interval: 5s
+    port: http-metrics
+  namespaceSelector:
+    matchNames:
+    - kube-nginx-ingress
+  selector:
+    matchLabels:
+      k8s-app: kube-nginx-ingress
