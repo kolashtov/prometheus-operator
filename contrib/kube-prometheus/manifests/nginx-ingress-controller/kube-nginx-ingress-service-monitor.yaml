@@ -4,6 +4,7 @@ metadata:
   labels:
     k8s-app: kube-nginx-ingress
   name: kube-nginx-ingress
+  namespace: monitoring
 spec:
   jobLabel: k8s-app
   endpoints:
