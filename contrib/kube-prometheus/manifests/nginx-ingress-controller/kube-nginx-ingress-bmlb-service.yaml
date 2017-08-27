@@ -9,8 +9,8 @@ spec:
   clusterIP: None
   ports:
   - name: http-metrics
-    port: 10255
+    port: 10355
     protocol: TCP
-    targetPort: 10255
+    targetPort: 10355
   selector:
     app: bmlb
