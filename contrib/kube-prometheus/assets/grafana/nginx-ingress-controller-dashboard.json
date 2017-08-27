@@ -620,7 +620,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum(container_memory_usage_bytes{namespace=\"kube-nginx-ingress\",pod_name=~\"nginx.*\"})",
+              "expr": "sum(container_memory_usage_bytes{namespace=\"kube-nginx-ingress\",pod_name=~\"nginx.*|bmlb.*\"})",
               "format": "time_series",
               "interval": "10s",
               "intervalFactor": 1,
@@ -629,7 +629,7 @@
               "step": 10
             },
             {
-              "expr": "sum(container_memory_usage_bytes{namespace=\"kube-nginx-ingress\",pod_name=~\"nginx.*\"}) by (pod_name)",
+              "expr": "sum(container_memory_usage_bytes{namespace=\"kube-nginx-ingress\",pod_name=~\"nginx.*|bmlb.*\"}) by (pod_name)",
               "format": "time_series",
               "interval": "10s",
               "intervalFactor": 1,
@@ -716,7 +716,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum(rate(container_cpu_usage_seconds_total{namespace=\"kube-nginx-ingress\",pod_name=~\"nginx.*\"}[1m])) ",
+              "expr": "sum(rate(container_cpu_usage_seconds_total{namespace=\"kube-nginx-ingress\",pod_name=~\"nginx.*|bmlb.*\"}[1m])) ",
               "format": "time_series",
               "interval": "10s",
               "intervalFactor": 1,
@@ -725,7 +725,7 @@
               "step": 10
             },
             {
-              "expr": "sum(rate(container_cpu_usage_seconds_total{namespace=\"kube-nginx-ingress\",pod_name=~\"nginx.*\"}[1m]))  by (pod_name)",
+              "expr": "sum(rate(container_cpu_usage_seconds_total{namespace=\"kube-nginx-ingress\",pod_name=~\"nginx.*|bmlb.*\"}[1m]))  by (pod_name)",
               "format": "time_series",
               "interval": "10s",
               "intervalFactor": 1,
@@ -755,6 +755,226 @@
             {
               "format": "short",
               "label": "cores",
+              "logBase": 1,
+              "max": null,
+              "min": "0",
+              "show": true
+            },
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": false
+            }
+          ]
+        }
+      ],
+      "repeat": null,
+      "repeatIteration": null,
+      "repeatRowId": null,
+      "showTitle": false,
+      "title": "Dashboard Row",
+      "titleSize": "h6"
+    },
+    {
+      "collapse": false,
+      "height": "",
+      "panels": [
+        {
+          "aliasColors": {},
+          "bars": true,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "${DS_PROMETHEUS}",
+          "fill": 5,
+          "height": "150",
+          "id": 11,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "max": true,
+            "min": true,
+            "rightSide": true,
+            "show": true,
+            "sideWidth": 500,
+            "sort": "max",
+            "sortDesc": true,
+            "total": false,
+            "values": true
+          },
+          "lines": false,
+          "linewidth": 1,
+          "links": [],
+          "nullPointMode": "null as zero",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [
+            {
+              "alias": "Total",
+              "bars": false,
+              "stack": false
+            }
+          ],
+          "spaceLength": 10,
+          "span": 12,
+          "stack": true,
+          "steppedLine": true,
+          "targets": [
+            {
+              "expr": "sum(nginx_connections_current{state=\"active\"})",
+              "format": "time_series",
+              "interval": "10s",
+              "intervalFactor": 1,
+              "legendFormat": "Total",
+              "refId": "B",
+              "step": 10
+            },
+            {
+              "expr": "sum(nginx_connections_current{state=\"active\"}) by (pod)",
+              "format": "time_series",
+              "interval": "10s",
+              "intervalFactor": 1,
+              "legendFormat": "{{pod}}",
+              "refId": "A",
+              "step": 10
+            }
+          ],
+          "thresholds": [],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "BMLB Active Connections",
+          "tooltip": {
+            "shared": true,
+            "sort": 0,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "buckets": null,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "label": "",
+              "logBase": 1,
+              "max": null,
+              "min": "0",
+              "show": true
+            },
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": false
+            }
+          ]
+        }
+      ],
+      "repeat": null,
+      "repeatIteration": null,
+      "repeatRowId": null,
+      "showTitle": false,
+      "title": "Dashboard Row",
+      "titleSize": "h6"
+    },
+    {
+      "collapse": false,
+      "height": 250,
+      "panels": [
+        {
+          "aliasColors": {},
+          "bars": true,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "${DS_PROMETHEUS}",
+          "fill": 5,
+          "height": "150",
+          "id": 12,
+          "legend": {
+            "alignAsTable": true,
+            "avg": true,
+            "current": true,
+            "max": true,
+            "min": true,
+            "rightSide": true,
+            "show": true,
+            "sideWidth": 500,
+            "sort": "max",
+            "sortDesc": true,
+            "total": false,
+            "values": true
+          },
+          "lines": false,
+          "linewidth": 1,
+          "links": [],
+          "nullPointMode": "null as zero",
+          "percentage": false,
+          "pointradius": 5,
+          "points": false,
+          "renderer": "flot",
+          "seriesOverrides": [
+            {
+              "alias": "Total",
+              "bars": false,
+              "stack": false
+            }
+          ],
+          "spaceLength": 10,
+          "span": 12,
+          "stack": true,
+          "steppedLine": true,
+          "targets": [
+            {
+              "expr": "sum(rate(nginx_connections_processed_total{stage=\"accepted\"}[10s]))",
+              "format": "time_series",
+              "interval": "10s",
+              "intervalFactor": 1,
+              "legendFormat": "Total",
+              "refId": "B",
+              "step": 10
+            },
+            {
+              "expr": "sum(rate(nginx_connections_processed_total{stage=\"accepted\"}[10s])) by (pod)",
+              "format": "time_series",
+              "interval": "10s",
+              "intervalFactor": 1,
+              "legendFormat": "{{pod}}",
+              "refId": "A",
+              "step": 10
+            }
+          ],
+          "thresholds": [],
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "BMLB Accepted Connections",
+          "tooltip": {
+            "shared": true,
+            "sort": 0,
+            "value_type": "individual"
+          },
+          "type": "graph",
+          "xaxis": {
+            "buckets": null,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "format": "short",
+              "label": "cps",
               "logBase": 1,
               "max": null,
               "min": "0",
@@ -816,5 +1036,5 @@
   },
   "timezone": "",
   "title": "Nginx Ingress Controller",
-  "version": 4
+  "version": 3
 }
