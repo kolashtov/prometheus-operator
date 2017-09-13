@@ -98,7 +98,6 @@ function install {
   BASIC_AUTH_SECRET=$(echo "$PASSWORD" | htpasswd -ni admin | base64 -w0)
   # install basic-auth secret
   sed -i -e "s%##BASIC_AUTH_SECRET##%$BASIC_AUTH_SECRET%" manifests/ingress/basic-auth-secret.yaml
-
   # install grafana credentials and ingress host
   sed -i -e "s/##GRAFANA_USER##/$USER_BASE64/" -e "s/##GRAFANA_PASSWORD##/$PASSWORD_BASE64/" manifests/grafana/grafana-credentials.yaml
   sed -i -e "s/##GRAFANA_HOST##/$GRAFANA_HOST/g" manifests/ingress/grafana-ingress.yaml
