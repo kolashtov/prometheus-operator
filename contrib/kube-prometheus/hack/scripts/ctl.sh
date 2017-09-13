@@ -13,6 +13,7 @@ Mandatory arguments:
   -i, --install                install into 'monitoring' namespace, override with '-n' option
   -u, --upgrade                upgrade existing installation, will reuse password and host names
   -d, --delete                 remove everything, including the namespace
+  --without-https              force use http instead of https for grafana and prometheus hosts
   --retention                  how long will Prometheus store metrics
   --storage-class-name         name of the storage class
   --storage-size               storage size with optional IEC suffix
@@ -39,7 +40,7 @@ STORAGE_CLASS_NAME="rbd"
 STORAGE_SIZE="20Gi"
 RETENTION_PERIOD="1440h"
 MEMORY_USAGE="2Gi"
-
+WITHOUT_HTTPS="false"
 
 TEMP=$(getopt -o i,u,d,n:,h --long namespace:,help,install,upgrade,delete,retention:,storage-class-name:,storage-size:,memory-usage: \
              -n 'ctl' -- "$@")
@@ -54,6 +55,8 @@ while true; do
       MODE=upgrade; shift ;;
     -d | --delete )
       MODE=delete; shift ;;
+    --without-https )
+      WITHOUT_HTTPS="true"; shift ;;
     -n | --namespace )
       NAMESPACE="$2"; shift 2 ;;
     --retention )
@@ -95,11 +98,14 @@ function install {
   BASIC_AUTH_SECRET=$(echo "$PASSWORD" | htpasswd -ni admin | base64 -w0)
   # install basic-auth secret
   sed -i -e "s%##BASIC_AUTH_SECRET##%$BASIC_AUTH_SECRET%" manifests/ingress/basic-auth-secret.yaml
+
   # install grafana credentials and ingress host
   sed -i -e "s/##GRAFANA_USER##/$USER_BASE64/" -e "s/##GRAFANA_PASSWORD##/$PASSWORD_BASE64/" manifests/grafana/grafana-credentials.yaml
   sed -i -e "s/##GRAFANA_HOST##/$GRAFANA_HOST/g" manifests/ingress/grafana-ingress.yaml
+  [ $WITHOUT_HTTPS = "true" ] && sed -i -e '/kubernetes.io\/tls-acme/d' -e '/tls:/,/secretName:/d' manifests/ingress/grafana-ingress.yaml
   # install prometheus ingress host
   sed -i "s/##PROMETHEUS_HOST##/$PROMETHEUS_HOST/g" manifests/ingress/prometheus-ingress.yaml
+  [ $WITHOUT_HTTPS = "true" ] && sed -i -e '/kubernetes.io\/tls-acme/d' -e '/tls:/,/secretName:/d' manifests/ingress/prometheus-ingress.yaml
   # set storage parameters
   sed -i -e "s/##RETENTION_PERIOD##/$RETENTION_PERIOD/g" \
          -e "s/##STORAGE_CLASS_NAME##/$STORAGE_CLASS_NAME/g" \
@@ -125,8 +131,10 @@ function upgrade {
   # install grafana credentials and ingress host
   sed -i -e "s/##GRAFANA_USER##/$USER_BASE64/" -e "s/##GRAFANA_PASSWORD##/$PASSWORD_BASE64/" manifests/grafana/grafana-credentials.yaml
   sed -i -e "s/##GRAFANA_HOST##/$GRAFANA_HOST/g" manifests/ingress/grafana-ingress.yaml
+  [ $WITHOUT_HTTPS = "true" ] && sed -i -e '/kubernetes.io\/tls-acme/d' -e '/tls:/,/secretName:/d' manifests/ingress/grafana-ingress.yaml
   # install prometheus ingress host
   sed -i "s/##PROMETHEUS_HOST##/$PROMETHEUS_HOST/g" manifests/ingress/prometheus-ingress.yaml
+  [ $WITHOUT_HTTPS = "true" ] && sed -i -e '/kubernetes.io\/tls-acme/d' -e '/tls:/,/secretName:/d' manifests/ingress/prometheus-ingress.yaml
   # get storage parameters
   RETENTION_PERIOD=$(kubectl -n "$NAMESPACE" get prometheus k8s -o json | jq -r '.spec.retention')
   MEMORY_USAGE=$(kubectl -n "$NAMESPACE" get prometheus k8s -o json | jq -r '.spec.resources.requests.memory')
