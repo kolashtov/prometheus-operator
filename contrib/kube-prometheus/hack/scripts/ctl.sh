@@ -42,7 +42,7 @@ RETENTION_PERIOD="1440h"
 MEMORY_USAGE="2Gi"
 WITHOUT_HTTPS="false"
 
-TEMP=$(getopt -o i,u,d,n:,h --long namespace:,help,install,upgrade,delete,retention:,storage-class-name:,storage-size:,memory-usage: \
+TEMP=$(getopt -o i,u,d,n:,h --long namespace:,help,install,upgrade,delete,retention:,storage-class-name:,storage-size:,memory-usage:,without-https \
              -n 'ctl' -- "$@")
 
 eval set -- "$TEMP"
